@@ -7,8 +7,8 @@ android {
         applicationId = "org.eclipse.pixelcamera.pixel9a"
         minSdk = 35
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0-9a"
+        versionCode = 2
+        versionName = "0.2.0-9a"
     }
     buildFeatures { buildConfig = false }
     compileOptions {

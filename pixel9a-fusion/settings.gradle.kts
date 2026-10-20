@@ -4,4 +4,4 @@ dependencyResolutionManagement {
     repositories { google(); mavenCentral() }
 }
 rootProject.name = "Pixel9aFusion"
-include(":app")
+include(":app", ":studio")

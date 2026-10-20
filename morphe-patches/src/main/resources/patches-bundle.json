@@ -1,7 +1,7 @@
 {
   "created_at": "2026-10-20T17:45:00Z",
-  "description": "Experimental Pixel 9a fusion development. Not released to a Manager download source; use this fork's Actions artifacts.",
+  "description": "Experimental Pixel 9a Fusion + Studio development (Director's View, Multi-Record, Single Take). Build artifacts are available through Actions after successful builds.",
   "download_url": "",
   "signature_download_url": "",
-  "version": "1.0.6-9a.1"
+  "version": "1.0.6-9a.2"
 }

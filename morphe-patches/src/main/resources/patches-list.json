@@ -1,9 +1,9 @@
 {
-  "version": "1.0.6-9a.1",
+  "version": "1.0.6-9a.2",
   "patches": [
     {
       "name": "Pixel 9a Multi-Frame Fusion",
-      "description": "Adds a Pixel 9a Camera2 capture activity with burst alignment, motion rejection, linear RGB fusion, and experimental 10x framing.",
+      "description": "Adds Pixel 9a Camera2 burst fusion and experimental 10x framing, with launchers for Studio Director's View / Multi-Record and AI-assisted Single Take.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [

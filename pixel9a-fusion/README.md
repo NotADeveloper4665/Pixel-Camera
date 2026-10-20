@@ -94,3 +94,9 @@ No tensor/neural acceleration is assumed. Other currently broken upstream featur
 - [Android ExifInterface](https://developer.android.com/reference/android/media/ExifInterface)
 
 New code is distributed under the repository's GPL-3.0 license.
+
+## Studio modes
+
+[Studio](studio/README.md) contains Director's View / Multi-Record and Single Take with bundled ML Kit person segmentation.
+The Studio APK also compiles these Fusion sources, so it is the complete standalone app.
+The SDK-only extension's mode buttons open the Studio package for features requiring those bundled dependencies.

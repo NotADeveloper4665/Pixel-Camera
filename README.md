@@ -15,11 +15,17 @@ Build results and installable test artifacts appear under [Actions](https://gith
 - Experimental 10× framing: query the camera zoom range, request the supported portion, then crop only the remaining ratio.
 - Tap focus/metering, exposure compensation, OIS when exposed, thermal limits, cancellation, and bounded image buffers.
 - Atomic MediaStore saving to `DCIM/Pixel9aFusion` with capture diagnostics in EXIF UserComment.
-- A standalone test APK and a Morphe extension that includes the same activity in the patched Google Camera APK.
+- Director's View / Multi-Record: two live lenses and two recorded clips, with shared optional microphone audio.
+- Single Take: eight seconds from main + ultrawide, selected stills, automatic tone presets, crops, and person-aware bokeh.
+- A complete Studio APK containing all three modes, plus the SDK-only Fusion APK and Morphe extension.
+
+See [Studio implementation and limits](pixel9a-fusion/studio/README.md).
+Simultaneous modes are enabled only after Android accepts and delivers both streams.
+Single Take stills use the video stream resolution, up to 720p; neural person segmentation drives portrait edits.
 
 The new activity has its own **Pixel 9a Fusion** launcher entry. It does not replace Google's native shutter pipeline.
-The original camera activity remains available in the patched APK. The standalone APK is useful for testing the capture
-pipeline before modifying a proprietary base APK.
+The original camera activity remains available in the patched APK. The Studio APK includes Fusion and the new modes together. The patched camera's Director's View and Single Take
+buttons open the installed Studio package, which includes ML Kit's model, resources, and native libraries.
 
 ## Pixel 9a preset
 
@@ -43,14 +49,15 @@ GitHub Packages dependencies in your normal build environment.
 ./tools/build_pixel9a.sh
 ```
 
-This runs the fusion unit tests and Android lint, builds the debug APK, extracts our extension DEX,
+This runs fusion and Studio unit tests and Android lint, builds both debug APKs, extracts the SDK-only extension DEX,
 verifies its classes, and builds the Morphe package. A failed task fails the build.
 
 Outputs:
 
 | Output | Purpose |
 | --- | --- |
-| `pixel9a-fusion/app/build/outputs/apk/debug/app-debug.apk` | Installable standalone experimental camera |
+| `pixel9a-fusion/app/build/outputs/apk/debug/app-debug.apk` | SDK-only Fusion test app |
+| `pixel9a-fusion/studio/build/outputs/apk/debug/studio-debug.apk` | Complete Studio app: Fusion, Director's View, Single Take |
 | `morphe-patches/patches/build/libs/*.mpp` | Patch bundle containing the fusion activity |
 | Test/lint reports | Build checks, not phone camera validation |
 
@@ -59,7 +66,7 @@ fresh CI signing keys may require uninstalling the previous debug build.
 
 ## Install and try
 
-For the standalone APK, install the build artifact on your Pixel 9a and grant camera permission.
+For all modes, install the Studio build artifact on your Pixel 9a and grant camera permission. Microphone permission is requested when sound is enabled.
 Choose **10×**, hold the phone still, then tap **Fuse 10×**. **Details** shows the actual exposed camera capabilities.
 
 For a patched Google Camera APK, use the generated `.mpp` with the compatible base

@@ -47,6 +47,14 @@ public final class FusionActivity extends Activity implements CameraController.L
         });
         TextView title = label("PIXEL 9a  /  FUSION", 20); title.setPadding(dp(16), dp(12), dp(16), dp(8));
         root.addView(title);
+        LinearLayout studioModes = new LinearLayout(this);
+        Button director = new Button(this); director.setText("Director's View");
+        director.setOnClickListener(v -> openStudio("director"));
+        Button singleTake = new Button(this); singleTake.setText("Single Take");
+        singleTake.setOnClickListener(v -> openStudio("single_take"));
+        studioModes.addView(director, new LinearLayout.LayoutParams(0, dp(48), 1));
+        studioModes.addView(singleTake, new LinearLayout.LayoutParams(0, dp(48), 1));
+        root.addView(studioModes);
         detail = label("Experimental multi-frame camera", 13);
         detail.setPadding(dp(16), 0, dp(16), dp(8)); root.addView(detail);
         viewport = new FrameLayout(this);
@@ -137,6 +145,19 @@ public final class FusionActivity extends Activity implements CameraController.L
             @Override public void onSurfaceTextureUpdated(SurfaceTexture surface) {}
         });
         if (!CameraProfile.isPixel9a()) status("This experimental build supports Pixel 9a only. Detected: " + android.os.Build.MODEL);
+    }
+    private void openStudio(String mode) {
+        if (capturing) { status("Finish the current fusion capture first."); return; }
+        try {
+            startActivity(new Intent().setClassName("org.eclipse.pixelcamera.studio",
+                    "org.eclipse.pixelcamera.studio.DirectorActivity").putExtra("mode", mode));
+        } catch (ActivityNotFoundException e) {
+            new AlertDialog.Builder(this).setTitle("Install Pixel 9a Studio")
+                    .setMessage("Director's View and Single Take are included in the Studio APK from this fork's builds.")
+                    .setPositiveButton("Builds", (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://github.com/NotADeveloper4665/Pixel-Camera/actions"))))
+                    .setNegativeButton("Close", null).show();
+        }
     }
     private final Runnable hideFocus = () -> { if (focusRing != null) focusRing.setVisibility(View.GONE); };
     private TextView label(String text, int size) {

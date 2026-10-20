@@ -48,7 +48,7 @@ internal val pixel9aFusionResourcesPatch = resourcePatch {
 
 val pixel9aFusionPatch = bytecodePatch(
     name = "Pixel 9a Multi-Frame Fusion",
-    description = "Adds a Pixel 9a Camera2 capture activity with timestamp-matched bursts, motion rejection, linear RGB fusion, and experimental 10x framing.",
+    description = "Adds a Pixel 9a Camera2 capture activity with timestamp-matched bursts, motion rejection, linear RGB fusion, experimental 10x framing, and Director/Single Take launchers for the Studio companion.",
     default = true
 ) {
     compatibleWith("com.google.android.GoogleCamera" to setOf("11.1.040.982810059.19"))
