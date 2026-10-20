@@ -7,6 +7,7 @@ import app.morphe.patches.pixelcamera.PixelCameraPatchUtils
 import app.morphe.patches.pixelcamera.looks.cameraLooksPatch
 
 val creatorSuitePatch = bytecodePatch(
+    default = false,
     name = "Pixel Camera Creator Suite",
     description = "Enables Teleprompter HUD (Biotite), Live Audio VU Meter (Mica), and Social Framing Guides (Slate)."
 ) {

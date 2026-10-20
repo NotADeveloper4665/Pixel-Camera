@@ -4,6 +4,7 @@ import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.pixelcamera.PixelCameraPatchUtils
 
 val telephotoPortraitAndZoomPatch = bytecodePatch(
+    default = false,
     name = "10x Viewfinder Quick Zoom",
     description = "Unlocks the discrete 10x quick zoom button on viewfinder across Photo and Night Sight modes on Pro and telephoto Pixel devices."
 ) {

@@ -1,14 +1,14 @@
 group = "app.morphe.patches.pixelcamera"
-version = "1.0.5"
+version = "1.0.6-9a.1"
 
 patches {
     about {
-        name = "Pixel Camera Looks & Creator Patches"
-        description = "Unlocks Camera Looks, Viewfinder Controls, 10x Zoom, and Creator Suite on Pixel 6-10"
-        source = "https://github.com/akshayykadam/Pixel-Camera"
-        author = "Akshay Kadam"
+        name = "Pixel Camera: Pixel 9a Fusion"
+        description = "Pixel 9a Camera2 multi-frame fusion extension; upstream experimental patches remain opt-in"
+        source = "https://github.com/NotADeveloper4665/Pixel-Camera"
+        author = "NotADeveloper4665; upstream patches by Akshay Kadam"
         contact = "na"
-        website = "https://github.com/akshayykadam/Pixel-Camera"
+        website = "https://github.com/NotADeveloper4665/Pixel-Camera"
         license = "GPLv3"
     }
 }

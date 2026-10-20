@@ -4,6 +4,7 @@ import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.pixelcamera.PixelCameraPatchUtils
 
 val portraitModeFixPatch = bytecodePatch(
+    default = false,
     name = "Permanent Portrait Mode Fix",
     description = "Fixes front camera total blur and rear camera flat/bokeh-less portraits by routing portrait processing to Google's pure-TFLite monocular depth pipeline across all cameras."
 ) {

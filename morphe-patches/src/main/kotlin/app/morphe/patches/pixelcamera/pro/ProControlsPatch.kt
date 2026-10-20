@@ -9,6 +9,7 @@ import com.android.tools.smali.dexlib2.Opcode
 import app.morphe.patches.pixelcamera.looks.cameraLooksPatch
 
 val proControlsPatch = bytecodePatch(
+    default = false,
     name = "Pro Manual Controls",
     description = "Enables Pro Manual Controls (Manual Focus, Shutter Speed, ISO, Focus Peaking, and Live Badges) on non-Pro Pixel models."
 ) {
