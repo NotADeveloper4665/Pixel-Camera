@@ -51,7 +51,8 @@ final class DualController implements AutoCloseable {
     private final Set<CameraDevice> retiring=Collections.newSetFromMap(new IdentityHashMap<>());
     private List<DualPlan> plans=Collections.emptyList();
     private DualPlan plan,pending;
-    private int generation,opening;
+    private volatile int generation;
+    private int opening;
     private boolean ready,recording,exporting,singleTake;
     private VideoEncoder[] encoders;
     private MediaRecorder microphone;
@@ -185,7 +186,7 @@ final class DualController implements AutoCloseable {
             feed.seen=true;
             if(!ready&&cameras.values().stream().flatMap(c->c.feeds.stream()).allMatch(v->v.seen)){
                 ready=true;if(openTimeout!=null)handler.removeCallbacks(openTimeout);
-                ui(()->{listener.ready(plan);listener.busy(false,false);});status("Both camera streams are live");
+                ui(()->{if(token==generation){listener.ready(plan);listener.busy(false,false);}});status("Both camera streams are live");
             }
             long now=SystemClock.elapsedRealtime();
             boolean show=now-feed.lastPreview>=180&&!previewBusy[feed.index].get();
@@ -214,7 +215,7 @@ final class DualController implements AutoCloseable {
                     finally{previewBusy[feed.index].set(false);}
                 });
             }
-        }catch(IllegalStateException|RejectedExecutionException|OutOfMemoryError e){if(!closed.get()&&token==generation)error("Camera frame error: "+e.getMessage());}
+        }catch(RuntimeException|OutOfMemoryError e){if(!closed.get()&&token==generation)error("Camera frame error: "+e.getMessage());}
         finally{if(image!=null)image.close();}
     }
     void start(boolean single,boolean sound){
