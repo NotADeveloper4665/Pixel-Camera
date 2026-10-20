@@ -65,7 +65,8 @@ Choose **10×**, hold the phone still, then tap **Fuse 10×**. **Details** shows
 For a patched Google Camera APK, use the generated `.mpp` with the compatible base
 `com.google.android.GoogleCamera 11.1.040.982810059.19`, selecting only the two preset patches initially.
 A proprietary base APK is not included or downloaded by this project. A patched Google Camera APK cannot be produced
-until a compatible base APK is provided to the patcher.
+until a compatible base APK is provided to the patcher. The extension does not lower the proprietary base APK's
+minimum Android version; its host SDK requirements still apply.
 
 ## Practical limits
 

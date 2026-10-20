@@ -36,6 +36,13 @@ public class FusionTest {
         assertEquals(3f,alignment.dx,.35f);
         assertEquals(-2f,alignment.dy,.35f);
     }
+    @Test public void refinesTranslationInOriginalImageCoordinates() {
+        Fusion.Frame reference=pattern(480,360);
+        Fusion.Alignment alignment=Fusion.align(reference,translate(reference,7,-5));
+        assertTrue(alignment.usable);
+        assertEquals(7f,alignment.dx,.4f);
+        assertEquals(-5f,alignment.dy,.4f);
+    }
     @Test public void oneFramePreservesPixels() {
         Fusion.Frame original=pattern(64,64);
         Fusion.Result result=Fusion.merge(Collections.singletonList(original));

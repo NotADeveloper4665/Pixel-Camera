@@ -46,7 +46,7 @@ final class CameraController implements AutoCloseable {
     private int serial, burstSerial, expected, failures;
     private int previewAf;
     private MeteringRectangle[] focusRegions;
-    private final Map<Long, byte[]> jpegByTimestamp = new HashMap<>();
+    private final NavigableMap<Long, byte[]> jpegByTimestamp = new TreeMap<>();
     private final Map<Long, TotalCaptureResult> resultByTimestamp = new HashMap<>();
     private final List<CapturedFrame> paired = new ArrayList<>();
     private Future<?> processingJob;
@@ -137,10 +137,8 @@ final class CameraController implements AutoCloseable {
         else builder.set(CaptureRequest.SCALER_CROP_REGION, cameraCrop(plan.hardware));
         if (profile.opticalStabilization)
             builder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_ON);
-        if (focusRegions != null) {
-            if (profile.afRegions > 0) builder.set(CaptureRequest.CONTROL_AF_REGIONS, focusRegions);
-            if (profile.aeRegions > 0) builder.set(CaptureRequest.CONTROL_AE_REGIONS, focusRegions);
-        }
+        if (profile.afRegions > 0) builder.set(CaptureRequest.CONTROL_AF_REGIONS, focusRegions);
+        if (profile.aeRegions > 0) builder.set(CaptureRequest.CONTROL_AE_REGIONS, focusRegions);
     }
     private final CameraCaptureSession.CaptureCallback previewCallback = new CameraCaptureSession.CaptureCallback() {
         @Override public void onCaptureCompleted(CameraCaptureSession s, CaptureRequest request, TotalCaptureResult result) {
@@ -286,11 +284,12 @@ final class CameraController implements AutoCloseable {
                     ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                     if (buffer.remaining() > MAX_JPEG_BYTES) { fail("Camera JPEG exceeds the capture memory budget"); continue; }
                     byte[] data = new byte[buffer.remaining()]; buffer.get(data);
-                    if (jpegByTimestamp.size() < Fusion.MAX_FRAMES) jpegByTimestamp.put(image.getTimestamp(), data);
+                    jpegByTimestamp.put(image.getTimestamp(), data);
+                    while (jpegByTimestamp.size() > Fusion.MAX_FRAMES) jpegByTimestamp.pollFirstEntry();
                 } finally { image.close(); }
                 matchFrames();
             }
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException | OutOfMemoryError e) {
             if (!closed.get()) fail("Image reader failed: " + e.getMessage());
         }
     }
@@ -323,27 +322,35 @@ final class CameraController implements AutoCloseable {
         collecting = false;
         if (burstTimeout != null) cameraHandler.removeCallbacks(burstTimeout);
         jpegByTimestamp.clear(); resultByTimestamp.clear();
+        if (!sequenceDone && session != null) try { session.abortCaptures(); } catch (Exception ignored) { }
         try { resetPreview(); } catch (Exception ignored) { }
         if (paired.isEmpty()) { fail("No JPEG/result timestamp pairs received. Capture cancelled."); return; }
         List<CapturedFrame> frames = new ArrayList<>(paired); paired.clear();
         float target = captureZoom; int orientation = profile.orientation;
         String capabilities = profile.describe();
         status("Aligning and fusing " + frames.size() + " frames…");
-        processingJob = processor.submit(() -> {
-            try {
-                FusionProcessor.Saved saved = FusionProcessor.process(context, frames, target, orientation, capabilities);
-                ui(() -> listener.saved(saved.uri, saved.summary));
-            } catch (CancellationException ignored) {
-            } catch (Exception | OutOfMemoryError e) {
-                status("Processing failed: " + e.getMessage());
-            } finally {
-                frames.clear();
-                cameraHandler.post(() -> { if (!closed.get()) setBusy(false); });
-            }
-        });
+        try {
+            processingJob = processor.submit(() -> {
+                try {
+                    FusionProcessor.Saved saved = FusionProcessor.process(context, frames, target, orientation, capabilities);
+                    ui(() -> listener.saved(saved.uri, saved.summary));
+                } catch (CancellationException ignored) {
+                } catch (Exception | OutOfMemoryError e) {
+                    status("Processing failed: " + e.getMessage());
+                } finally {
+                    frames.clear();
+                    cameraHandler.post(() -> { if (!closed.get()) setBusy(false); });
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            frames.clear();
+            if (!closed.get()) fail("Processing worker is unavailable");
+        }
     }
     private void fail(String message) {
+        boolean abort = collecting;
         waiting3a = false; collecting = false;
+        if (abort && session != null) try { session.abortCaptures(); } catch (Exception ignored) { }
         if (focusTimeout != null) cameraHandler.removeCallbacks(focusTimeout);
         if (burstTimeout != null) cameraHandler.removeCallbacks(burstTimeout);
         jpegByTimestamp.clear(); resultByTimestamp.clear(); paired.clear();

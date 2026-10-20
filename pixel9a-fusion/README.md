@@ -38,7 +38,7 @@ applies only the remaining software crop. Saved images are rotated once from sen
 1. Decode the central residual crop from each JPEG, bounded to 1.5 MP.
 2. Choose the frame with greatest sampled Laplacian energy as the reference.
 3. Build grayscale image pyramids. Search for translation by zero-mean squared residual.
-4. Refine the translation with a local parabolic subpixel fit.
+4. Refine in original pixel coordinates, then apply a local parabolic subpixel fit.
 5. Reject frames with high registration error or excessive translation.
 6. Resample aligned frames bilinearly. Reject pixels inconsistent with the reference.
 7. Average accepted samples in linear RGB using robust residual weights.

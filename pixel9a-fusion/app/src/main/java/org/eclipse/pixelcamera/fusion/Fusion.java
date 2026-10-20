@@ -93,7 +93,8 @@ public final class Fusion {
         int right = Math.min(ref.w - border, other.w - dx);
         int bottom = Math.min(ref.h - border, other.h - dy);
         double sum = 0, squares = 0; int count = 0;
-        for (int y = top; y < bottom; y += 2) for (int x = left; x < right; x += 2) {
+        int stride = Math.max(2, Math.max(ref.w, ref.h) / 192);
+        for (int y = top; y < bottom; y += stride) for (int x = left; x < right; x += stride) {
             double d = ref.data[y * ref.w + x] - other.data[(y + dy) * other.w + x + dx];
             sum += d; squares += d * d; count++;
         }
@@ -126,12 +127,28 @@ public final class Fusion {
                 }
         }
         Gray g = a.get(0), h = b.get(0);
+        int outputScale = scale;
+        if (scale > 1) {
+            // Refine in original pixel coordinates so downsampled registration cannot
+            // silently turn a subpixel estimate into several pixels of full-size blur.
+            g = gray(reference, 1); h = gray(other, 1);
+            int cx = dx * scale, cy = dy * scale;
+            dx = cx; dy = cy; best = cost(g, h, dx, dy);
+            for (int sy = cy-scale; sy <= cy+scale; sy++) {
+                checkCancelled();
+                for (int sx = cx-scale; sx <= cx+scale; sx++) {
+                    double candidate = cost(g, h, sx, sy);
+                    if (candidate < best - 1e-12) { best = candidate; dx = sx; dy = sy; }
+                }
+            }
+            outputScale = 1;
+        }
         float subx = vertex(cost(g, h, dx - 1, dy), best, cost(g, h, dx + 1, dy));
         float suby = vertex(cost(g, h, dx, dy - 1), best, cost(g, h, dx, dy + 1));
         float error = (float) Math.sqrt(best);
         boolean usable = Float.isFinite(error) && error < .065 &&
                 Math.abs(dx) < g.w * .18 && Math.abs(dy) < g.h * .18;
-        return new Alignment((dx + subx) * scale, (dy + suby) * scale, error, usable);
+        return new Alignment((dx + subx) * outputScale, (dy + suby) * outputScale, error, usable);
     }
     private static double sharpness(Frame frame) {
         Gray g = gray(frame, Math.max(1, (Math.max(frame.width, frame.height) + 255) / 256));
