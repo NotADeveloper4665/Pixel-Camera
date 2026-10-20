@@ -84,7 +84,7 @@ final class MediaExport implements AutoCloseable {
             buffer.clear();int size=e.readSampleData(buffer,0);if(size<0)break;
             long pts=e.getSampleTime()+offset;
             if(pts>=0){
-                info.set(0,size,Math.max(last+1,pts),e.getSampleFlags()&MediaExtractor.SAMPLE_FLAG_SYNC);
+                info.set(0,size,Math.max(last+1,pts),(e.getSampleFlags()&MediaExtractor.SAMPLE_FLAG_SYNC)!=0?MediaCodec.BUFFER_FLAG_KEY_FRAME:0);
                 buffer.position(0);buffer.limit(size);m.writeSampleData(track,buffer,info);last=info.presentationTimeUs;
             }
             e.advance();

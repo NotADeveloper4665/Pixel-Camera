@@ -14,6 +14,14 @@ public class FusionTest {
         }
         return new Fusion.Frame(width,height,pixels);
     }
+    private Fusion.Frame randomTexture(int width, int height, long seed) {
+        int[] pixels = new int[width*height]; Random random = new Random(seed);
+        for (int i=0; i<pixels.length; i++) {
+            int v = 28 + random.nextInt(200);
+            pixels[i] = 0xff000000 | v<<16 | v<<8 | v;
+        }
+        return new Fusion.Frame(width,height,pixels);
+    }
     private Fusion.Frame translate(Fusion.Frame f, int dx, int dy) {
         int[] pixels = new int[f.pixels.length];
         for (int y=0; y<f.height; y++) for (int x=0; x<f.width; x++) {
@@ -37,10 +45,10 @@ public class FusionTest {
         assertEquals(-2f,alignment.dy,.35f);
     }
     @Test public void refinesTranslationInOriginalImageCoordinates() {
-        Fusion.Frame reference=pattern(480,360);
+        Fusion.Frame reference=randomTexture(480,360,551);
         Fusion.Alignment alignment=Fusion.align(reference,translate(reference,7,-5));
         assertTrue(alignment.usable);
-        assertEquals(7f,alignment.dx,.4f);
+        assertEquals("dx="+alignment.dx,7f,alignment.dx,.4f);
         assertEquals(-5f,alignment.dy,.4f);
     }
     @Test public void oneFramePreservesPixels() {
