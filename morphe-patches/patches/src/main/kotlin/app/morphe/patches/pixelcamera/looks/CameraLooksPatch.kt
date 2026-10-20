@@ -5,6 +5,7 @@ import app.morphe.patcher.util.smali.toInstructions
 import app.morphe.patches.pixelcamera.PixelCameraPatchUtils
 
 val cameraLooksPatch = bytecodePatch(
+    default = false,
     name = "Camera Looks Backport",
     description = "Enables Google Pixel 11's 13 signature Camera Looks (Sauce & Tomte including Flat, Buffalo, Dijon) on Pixel 6 through Pixel 10, fixes Portrait Mode blur on all cameras, and resolves Pixel 10 photo saving."
 ) {

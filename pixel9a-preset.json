@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "device": "Pixel 9a",
+  "deviceCode": "tegu",
+  "androidMinimum": 35,
+  "basePackage": "com.google.android.GoogleCamera",
+  "baseVersion": "11.1.040.982810059.19",
+  "selectedPatches": [
+    "Pixel 9a Multi-Frame Fusion",
+    "Pixel Camera Clone (Non-Root)"
+  ],
+  "note": "Selection manifest for humans/build tooling, not a Morphe Manager import format. Other upstream patches remain opt-in and unverified on Pixel 9a."
+}

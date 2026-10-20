@@ -1,57 +1,132 @@
-name: Build Morphe Patch Package
+name: Nexus Camera Test Build
 
 on:
   push:
+    branches: [main, pixel9a-fusion]
     paths:
+      - 'pixel9a-fusion/**'
       - 'morphe-patches/**'
+      - 'tools/**'
+      - '.github/workflows/build-morphe-patch.yml'
+  pull_request:
+    paths:
+      - 'pixel9a-fusion/**'
+      - 'morphe-patches/**'
+      - 'tools/**'
       - '.github/workflows/build-morphe-patch.yml'
   workflow_dispatch:
-  release:
-    types: [published]
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: pixel9a-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build-mpp:
+  fusion:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 20
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up Java JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+      - name: Install Android SDK 35
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Test, lint, and build SDK-only capture activity
+        run: ./morphe-patches/gradlew -p pixel9a-fusion :app:testDebugUnitTest :app:lintDebug :app:packageNexusTestApk --no-daemon
+      - name: Prepare injection DEX
+        run: python3 tools/prepare_fusion_dex.py pixel9a-fusion/app/build/outputs/apk/debug/app-debug.apk build/fusion-dex/Pixel9aFusion.dex
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Nexus-Camera-Fusion
+          path: "pixel9a-fusion/app/build/outputs/test-apk/Nexus Camera Fusion.apk"
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pixel9a-fusion-dex
+          path: build/fusion-dex/Pixel9aFusion.dex
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pixel9a-fusion-test-reports
+          path: |
+            pixel9a-fusion/app/build/reports/
+            pixel9a-fusion/app/build/test-results/
 
-      - name: Grant Execute Permission for Gradlew
+  patches:
+    needs: fusion
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+      - name: Install Android SDK 35
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - uses: actions/download-artifact@v4
+        with:
+          name: pixel9a-fusion-dex
+          path: build/fusion-dex
+      - name: Install the generated extension
         run: |
-          if [ -f "morphe-patches/gradlew" ]; then
-            chmod +x morphe-patches/gradlew
-          fi
-
-      - name: Build Morphe Patch Package (.mpp)
+          cp build/fusion-dex/Pixel9aFusion.dex morphe-patches/patches/src/main/resources/Pixel9aFusion.dex
+          cp build/fusion-dex/Pixel9aFusion.dex morphe-patches/src/main/resources/Pixel9aFusion.dex
+      - name: Verify injection DEX and build Morphe package
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        working-directory: morphe-patches
-        run: |
-          if [ -f "./gradlew" ]; then
-            ./gradlew buildAndroid --no-daemon || ./gradlew :patches:buildAndroid --no-daemon || ./gradlew build --no-daemon
-          else
-            gradle buildAndroid --no-daemon || gradle :patches:buildAndroid --no-daemon || gradle build --no-daemon || true
-          fi
-
-      - name: Upload .mpp Artifact
-        uses: actions/upload-artifact@v4
+        run: ./morphe-patches/gradlew -p morphe-patches :patches:test --tests '*Pixel9aFusionDexTest' :patches:buildAndroid --no-daemon
+      - name: Verify packaged fusion extension
+        run: python3 tools/check_pixel9a_package.py
+      - uses: actions/upload-artifact@v4
         with:
-          name: morphe-patches-pixelcamera
-          path: morphe-patches/**/build/libs/*.mpp
-          if-no-files-found: warn
-
-      - name: Attach .mpp to Release
-        if: github.event_name == 'release'
-        uses: softprops/action-gh-release@v2
+          name: pixel9a-morphe-patches
+          path: morphe-patches/patches/build/libs/*.mpp
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          files: morphe-patches/**/build/libs/*.mpp
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: pixel9a-patch-test-reports
+          path: morphe-patches/patches/build/reports/tests/
+
+  studio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+      - name: Install Android SDK 35
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Test and build Director's View and Single Take
+        run: ./morphe-patches/gradlew -p pixel9a-fusion :studio:testDebugUnitTest :studio:lintDebug :studio:packageNexusTestApk --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Nexus-Camera
+          path: "pixel9a-fusion/studio/build/outputs/test-apk/Nexus Camera.apk"
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pixel9a-studio-test-reports
+          path: |
+            pixel9a-fusion/studio/build/reports/
+            pixel9a-fusion/studio/build/test-results/

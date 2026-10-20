@@ -14,6 +14,7 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 
 val quickAccessPatch = bytecodePatch(
+    default = false,
     name = "Viewfinder Quick Access Controls",
     description = "Enables customizable Left/Right viewfinder quick-access shortcut slots, interactive Brightness & Shadow tick-slider with tap-focus guards, smooth shadow curve, and Camera Looks quick-access items."
 ) {

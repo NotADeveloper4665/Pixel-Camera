@@ -1,0 +1,17 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="true" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <queries><package android:name="com.google.android.GoogleCamera" /></queries>
+    <application android:label="Nexus Camera" android:allowBackup="false"
+        android:theme="@android:style/Theme.Material.NoActionBar" android:supportsRtl="true">
+        <activity android:name="org.eclipse.pixelcamera.fusion.FusionActivity" android:label="Nexus Camera"
+            android:exported="true" android:screenOrientation="portrait" android:resizeableActivity="false">
+            <intent-filter><action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+        </activity>
+        <activity android:name="org.eclipse.pixelcamera.studio.DirectorActivity" android:exported="true"
+            android:screenOrientation="portrait" android:resizeableActivity="false" />
+    </application>
+</manifest>
