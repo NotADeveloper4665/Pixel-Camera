@@ -3,8 +3,8 @@ version = "1.0.6-9a.2"
 
 patches {
     about {
-        name = "Pixel Camera: Pixel 9a Fusion"
-        description = "Pixel 9a Camera2 multi-frame fusion extension; upstream experimental patches remain opt-in"
+        name = "Pixel Camera: Pixel 9a Studio"
+        description = "Pixel 9a Fusion extension with Director and Single Take launchers for the Studio companion"
         source = "https://github.com/NotADeveloper4665/Pixel-Camera"
         author = "NotADeveloper4665; upstream patches by Akshay Kadam"
         contact = "na"

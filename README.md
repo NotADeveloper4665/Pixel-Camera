@@ -1,4 +1,4 @@
-# Pixel Camera — Pixel 9a Fusion
+# Pixel Camera — Pixel 9a Studio
 
 Pixel 9a specialization of [Akshayykadam/Pixel-Camera](https://github.com/Akshayykadam/Pixel-Camera).
 The original patch sources and GPL-3.0 license are retained. New capture code lives in
