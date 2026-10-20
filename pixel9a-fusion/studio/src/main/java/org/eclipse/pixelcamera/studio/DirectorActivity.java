@@ -32,7 +32,7 @@ public final class DirectorActivity extends Activity implements DualController.L
             Insets bars=insets.getInsets(WindowInsets.Type.systemBars()|WindowInsets.Type.displayCutout());
             view.setPadding(bars.left,bars.top,bars.right,bars.bottom);return insets;
         });
-        TextView title=text("DIRECTOR'S VIEW",21);title.setPadding(16,16,16,8);root.addView(title);
+        TextView title=text("NEXUS CAMERA / DIRECTOR'S VIEW",21);title.setPadding(16,16,16,8);root.addView(title);
         pair=new Spinner(this);root.addView(pair);
         for(int i=0;i<2;i++){
             FrameLayout frame=new FrameLayout(this);

@@ -1,4 +1,4 @@
-# Pixel 9a Studio: Director's View, Multi-Record, Single Take
+# Nexus Camera: Director's View, Multi-Record, Single Take
 
 This module builds a complete Android application containing Fusion plus the new modes.
 It bundles Google's ML Kit person segmentation model. The standalone Studio APK includes its
@@ -52,7 +52,7 @@ The front live view is mirrored for framing; saved front video/stills use normal
 
 ## Installation and patch integration
 
-Install the `pixel9a-studio-debug-apk` artifact. It contains Fusion, Director's View, and Single Take in one APK.
+Download the `Nexus-Camera` artifact from a successful development-branch Actions run, extract it, and install **Nexus Camera.apk**. It contains Fusion, Director's View, and Single Take in one APK.
 The separate SDK-only Fusion APK is not required for Studio.
 
 The original patch extension stays SDK-only. Its new mode buttons explicitly launch the installed Studio package.
@@ -62,7 +62,7 @@ To use Director's View or Single Take from a patched Google Camera installation,
 ## Build and checks
 
 ```bash
-./morphe-patches/gradlew -p pixel9a-fusion :studio:testDebugUnitTest :studio:lintDebug :studio:assembleDebug
+./morphe-patches/gradlew -p pixel9a-fusion :studio:testDebugUnitTest :studio:lintDebug :studio:packageNexusTestApk
 ```
 
 The workflow uploads the Studio APK separately from the SDK-only fusion DEX and Morphe package.

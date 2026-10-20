@@ -20,3 +20,10 @@ android {
     }
 }
 dependencies { testImplementation("junit:junit:4.13.2") }
+
+tasks.register<Copy>("packageNexusTestApk") {
+    dependsOn("assembleDebug")
+    from(layout.buildDirectory.file("outputs/apk/debug/app-debug.apk"))
+    into(layout.buildDirectory.dir("outputs/test-apk"))
+    rename { "Nexus Camera Fusion.apk" }
+}

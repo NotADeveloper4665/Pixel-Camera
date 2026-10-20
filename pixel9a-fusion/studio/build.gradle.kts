@@ -20,3 +20,10 @@ dependencies {
     implementation("com.google.mlkit:segmentation-selfie:16.0.0-beta6")
     testImplementation("junit:junit:4.13.2")
 }
+
+tasks.register<Copy>("packageNexusTestApk") {
+    dependsOn("assembleDebug")
+    from(layout.buildDirectory.file("outputs/apk/debug/studio-debug.apk"))
+    into(layout.buildDirectory.dir("outputs/test-apk"))
+    rename { "Nexus Camera.apk" }
+}

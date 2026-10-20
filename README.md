@@ -1,4 +1,4 @@
-# Pixel Camera — Pixel 9a Studio
+# Nexus Camera — Pixel 9a
 
 Pixel 9a specialization of [Akshayykadam/Pixel-Camera](https://github.com/Akshayykadam/Pixel-Camera).
 The original patch sources and GPL-3.0 license are retained. New capture code lives in
@@ -23,7 +23,7 @@ See [Studio implementation and limits](pixel9a-fusion/studio/README.md).
 Simultaneous modes are enabled only after Android accepts and delivers both streams.
 Single Take stills use the video stream resolution, up to 720p; neural person segmentation drives portrait edits.
 
-The new activity has its own **Pixel 9a Fusion** launcher entry. It does not replace Google's native shutter pipeline.
+The new activity has its own **Nexus Camera** launcher entry. It does not replace Google's native shutter pipeline.
 The original camera activity remains available in the patched APK. The Studio APK includes Fusion and the new modes together. The patched camera's Director's View and Single Take
 buttons open the installed Studio package, which includes ML Kit's model, resources, and native libraries.
 
@@ -56,17 +56,30 @@ Outputs:
 
 | Output | Purpose |
 | --- | --- |
-| `pixel9a-fusion/app/build/outputs/apk/debug/app-debug.apk` | SDK-only Fusion test app |
-| `pixel9a-fusion/studio/build/outputs/apk/debug/studio-debug.apk` | Complete Studio app: Fusion, Director's View, Single Take |
+| `pixel9a-fusion/app/build/outputs/test-apk/Nexus Camera Fusion.apk` | SDK-only Fusion test app |
+| `pixel9a-fusion/studio/build/outputs/test-apk/Nexus Camera.apk` | Complete Studio app: Fusion, Director's View, Single Take |
 | `morphe-patches/patches/build/libs/*.mpp` | Patch bundle containing the fusion activity |
 | Test/lint reports | Build checks, not phone camera validation |
 
 The same process is configured in GitHub Actions. Debug APK signing is for development; reinstalling across
 fresh CI signing keys may require uninstalling the previous debug build.
 
+## Download the test APK
+
+No APK release has been published yet. Build the development branch through GitHub Actions:
+
+1. Open [Actions](https://github.com/NotADeveloper4665/Pixel-Camera/actions) and enable workflows if prompted.
+2. Open the build workflow, click **Run workflow**, select branch **pixel9a-fusion**, then run it.
+   Before this branch is merged, the workflow may still be listed under its original name, **Build Morphe Patch Package**.
+3. After the **studio** job succeeds, open the run's **Artifacts** and download **Nexus-Camera**.
+4. Extract the ZIP and install **Nexus Camera.apk** on your Pixel 9a.
+
+The phone's app label is **Nexus Camera**. The **Nexus-Camera-Fusion** artifact is the smaller SDK-only test build;
+use **Nexus-Camera** for all modes.
+
 ## Install and try
 
-For all modes, install the Studio build artifact on your Pixel 9a and grant camera permission. Microphone permission is requested when sound is enabled.
+For all modes, install **Nexus Camera.apk** from the **Nexus-Camera** build artifact on your Pixel 9a and grant camera permission. Microphone permission is requested when sound is enabled.
 Choose **10×**, hold the phone still, then tap **Fuse 10×**. **Details** shows the actual exposed camera capabilities.
 
 For a patched Google Camera APK, use the generated `.mpp` with the compatible base

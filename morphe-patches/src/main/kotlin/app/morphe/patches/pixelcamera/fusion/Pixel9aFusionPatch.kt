@@ -20,7 +20,7 @@ internal val pixel9aFusionResourcesPatch = resourcePatch {
             val activity = document.createElement("activity")
             fun attribute(name: String, value: String) = activity.setAttributeNS(ANDROID, "android:$name", value)
             attribute("name", FUSION_ACTIVITY)
-            attribute("label", "Pixel 9a Fusion")
+            attribute("label", "Nexus Camera")
             attribute("exported", "true")
             attribute("screenOrientation", "portrait")
             attribute("resizeableActivity", "false")

@@ -4,9 +4,9 @@
     <uses-feature android:name="android.hardware.camera.any" android:required="true" />
     <uses-feature android:name="android.hardware.microphone" android:required="false" />
     <queries><package android:name="com.google.android.GoogleCamera" /></queries>
-    <application android:label="Pixel 9a Studio" android:allowBackup="false"
+    <application android:label="Nexus Camera" android:allowBackup="false"
         android:theme="@android:style/Theme.Material.NoActionBar" android:supportsRtl="true">
-        <activity android:name="org.eclipse.pixelcamera.fusion.FusionActivity" android:label="Pixel 9a Studio"
+        <activity android:name="org.eclipse.pixelcamera.fusion.FusionActivity" android:label="Nexus Camera"
             android:exported="true" android:screenOrientation="portrait" android:resizeableActivity="false">
             <intent-filter><action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" /></intent-filter>

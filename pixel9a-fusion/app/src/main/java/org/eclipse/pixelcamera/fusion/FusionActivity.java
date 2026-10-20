@@ -45,7 +45,7 @@ public final class FusionActivity extends Activity implements CameraController.L
             view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
             return insets;
         });
-        TextView title = label("PIXEL 9a  /  FUSION", 20); title.setPadding(dp(16), dp(12), dp(16), dp(8));
+        TextView title = label("NEXUS CAMERA", 20); title.setPadding(dp(16), dp(12), dp(16), dp(8));
         root.addView(title);
         LinearLayout studioModes = new LinearLayout(this);
         Button director = new Button(this); director.setText("Director's View");
@@ -152,8 +152,8 @@ public final class FusionActivity extends Activity implements CameraController.L
             startActivity(new Intent().setClassName("org.eclipse.pixelcamera.studio",
                     "org.eclipse.pixelcamera.studio.DirectorActivity").putExtra("mode", mode));
         } catch (ActivityNotFoundException e) {
-            new AlertDialog.Builder(this).setTitle("Install Pixel 9a Studio")
-                    .setMessage("Director's View and Single Take are included in the Studio APK from this fork's builds.")
+            new AlertDialog.Builder(this).setTitle("Install Nexus Camera")
+                    .setMessage("Director's View and Single Take are included in Nexus Camera.apk from this fork's builds.")
                     .setPositiveButton("Builds", (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW,
                             Uri.parse("https://github.com/NotADeveloper4665/Pixel-Camera/actions"))))
                     .setNegativeButton("Close", null).show();
